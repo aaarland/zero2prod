@@ -60,3 +60,25 @@ cargo install cargo-audit
 # Run cargo audit
 cargo audit
 ```
+
+### Static analysis
+
+```bash
+# Install cargo geiger
+cargo install cargo-geiger
+# Run cargo geiger
+cargo geiger
+```
+
+## Email newsletter
+
+### Specifications
+
+User stroies:
+-   As a blog visitor, I want to subscribe to the newsletter so that I can receive updates about new blog posts.
+-  As a blog visitor, I want to unsubscribe from the newsletter so that I don't receive updates about new blog posts.
+- As a blog author, I want to send emails to subscribers so that I can notify them about new blog posts.
+
+
+
+
