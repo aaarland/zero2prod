@@ -1,7 +1,7 @@
 //! tests/health_check.rs
 
-use std::net::TcpListener;
 use sqlx::{Connection, PgConnection};
+use std::net::TcpListener;
 use zero2prod::{self, configuration};
 
 fn spawn_app() -> String {
@@ -40,7 +40,7 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
         .await
         .expect("Failed to connect to Postgres.");
     let client = reqwest::Client::new();
-    
+
     // Act
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
     let response = client
