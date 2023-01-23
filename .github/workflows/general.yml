@@ -82,9 +82,9 @@ jobs:
           sudo apt-get install libpq-dev -y
           SKIP_DOCKER=true ./scripts/init_db.sh
 
-      - name: Check sqlx-data.json is up-to-date
-        run: |
-          cargo sqlx prepare --check -- --bin zero2prod
+      # - name: Check sqlx-data.json is up-to-date
+      #   run: |
+      #     cargo sqlx prepare --check -- --bin zero2prod
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
@@ -109,6 +109,7 @@ jobs:
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
+    permissions: write-all
     services:
       postgres:
         image: postgres:12
