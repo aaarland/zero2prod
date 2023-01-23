@@ -44,7 +44,6 @@ until psql -h localhost -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'; d
   sleep 1
 done
 export DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@127.0.0.1:${DB_PORT}/${DB_NAME}"
-sqlx database create
 sqlx migrate run
 
 >&2 echo "Postgres has been migrated, ready to go!"
