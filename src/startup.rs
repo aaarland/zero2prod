@@ -3,7 +3,6 @@ use actix_web::{dev::Server, web, HttpServer};
 use sqlx::PgPool;
 use std::net::TcpListener;
 
-
 use crate::routes::*;
 
 pub fn run(listner: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Error> {
