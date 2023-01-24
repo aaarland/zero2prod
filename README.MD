@@ -21,7 +21,7 @@ cargo test -p chapter_01 -- test_name
 
 ### Code coverage
 
-```bash 
+```bash
 # Install tarpaulin
 cargo install cargo-tarpaulin
 # Run tarpaulin
@@ -43,7 +43,7 @@ cargo clippy -- -D warnings
 
 ### Formatting
 
-```bash 
+```bash
 # Install rustfmt
 rustup component add rustfmt
 # Run rustfmt
@@ -70,15 +70,41 @@ cargo install cargo-geiger
 cargo geiger
 ```
 
+## Cargo tools
+
+### Cargo nightly
+
+    ```bash
+    # Install cargo nightly
+    rustup toolchain install nightly --allow-downgrade
+    # Run cargo nightly
+    cargo +nightly build
+    ```
+
+### Cargo watch
+
+    ```bash
+    # Install cargo watch
+    cargo install cargo-watch
+    # Run cargo watch
+    cargo watch -x build
+    ```
+
+### Cargo udeps
+
+    ```bash
+    # Install cargo udeps
+    cargo install cargo-udeps
+    # Run cargo udeps
+    cargo +nightly udeps
+    ```
+
 ## Email newsletter
 
 ### Specifications
 
 User stroies:
--   As a blog visitor, I want to subscribe to the newsletter so that I can receive updates about new blog posts.
--  As a blog visitor, I want to unsubscribe from the newsletter so that I don't receive updates about new blog posts.
+
+- As a blog visitor, I want to subscribe to the newsletter so that I can receive updates about new blog posts.
+- As a blog visitor, I want to unsubscribe from the newsletter so that I don't receive updates about new blog posts.
 - As a blog author, I want to send emails to subscribers so that I can notify them about new blog posts.
-
-
-
-

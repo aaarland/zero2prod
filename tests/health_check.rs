@@ -1,6 +1,6 @@
 //! tests/health_check.rs
 
-use sqlx::{Connection, Executor, PgConnection, PgPool};
+use sqlx::{Executor, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
 use zero2prod::{
