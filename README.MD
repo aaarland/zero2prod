@@ -99,6 +99,11 @@ cargo geiger
     cargo +nightly udeps
     ```
 
+### Telemetry
+
+    tracing
+    open telemetry jeager honeycomb
+
 ## Email newsletter
 
 ### Specifications
