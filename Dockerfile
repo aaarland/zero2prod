@@ -4,4 +4,5 @@ WORKDIR /app
 COPY . .
 ENV SQLX_OFFLINE true
 RUN cargo build --release
+ENV APP_ENVIORNMENT production
 ENTRYPOINT [ "./target/release/zero2prod" ]
