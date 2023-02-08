@@ -51,7 +51,7 @@ mod tests {
             '<', '>', '"', '`', '(', ')', '{', '}', '\\', ';', '/', '[', ']',
         ];
         for c in invalid_characters {
-            let name = format!("name_with_{}", c);
+            let name = format!("name_with_{c}");
             assert_err!(SubscriberName::parse(name));
         }
     }
