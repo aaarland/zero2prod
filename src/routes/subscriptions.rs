@@ -5,6 +5,7 @@ use uuid::Uuid;
 
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
 use crate::email_client::EmailClient;
+use crate::startup::ApplicationBaseUrl;
 
 #[derive(serde::Deserialize)]
 #[allow(dead_code)]
@@ -14,13 +15,14 @@ pub struct FormData {
 }
 #[tracing::instrument(
     name = "Adding a new subscriber", 
-    skip(form, pool, email_client), fields(subscriber_email = %form.email, subscriber_name = %form.name
+    skip(form, pool, email_client, base_url), fields(subscriber_email = %form.email, subscriber_name = %form.name
     ))
 ]
 pub async fn subscribe(
     form: web::Form<FormData>,
     pool: web::Data<PgPool>,
     email_client: web::Data<EmailClient>,
+    base_url: web::Data<ApplicationBaseUrl>,
 ) -> HttpResponse {
     let new_subscriber = match form.0.try_into() {
         Ok(subscriber) => subscriber,
@@ -31,7 +33,7 @@ pub async fn subscribe(
         return HttpResponse::InternalServerError().finish();
     }
 
-    if send_confirmation_email(new_subscriber, &email_client)
+    if send_confirmation_email(new_subscriber, &email_client, &base_url.0)
         .await
         .is_err()
     {
@@ -75,13 +77,14 @@ pub async fn insert_subscriber(
 
 #[tracing::instrument(
     name = "Sending a confirmation email",
-    skip(new_subscriber, email_client)
+    skip(new_subscriber, email_client, base_url)
 )]
 pub async fn send_confirmation_email(
     new_subscriber: NewSubscriber,
     email_client: &EmailClient,
+    base_url: &str,
 ) -> Result<(), reqwest::Error> {
-    let confirmation_link = "https://api.aswaa.dev/subscriptions/confirm/";
+    let confirmation_link = format!("{base_url}/subscriptions/confirm?subscription_token=my_token");
     let plain_body = format!(
         "Welcome to our newsletter! \nVisit the link below to confirm your subscription: \n {confirmation_link}",
     );
