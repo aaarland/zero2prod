@@ -84,13 +84,11 @@ pub async fn send_confirmation_email(
     let confirmation_link = "https://api.aswaa.dev/subscriptions/confirm/";
     let plain_body = format!(
         "Welcome to our newsletter! \nVisit the link below to confirm your subscription: \n {confirmation_link}",
-        
     );
     let html_body = format!(
         "Welcome to our newsletter! <br/>\
             Please confirm your subscription by clicking the link below: <br/>\
             Click <a href=\"{confirmation_link}\">here</a> to confirm your subscription",
-        
     );
 
     email_client
