@@ -4,6 +4,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
+use crate::email_client::EmailClient;
 
 #[derive(serde::Deserialize)]
 #[allow(dead_code)]
@@ -13,23 +14,30 @@ pub struct FormData {
 }
 #[tracing::instrument(
     name = "Adding a new subscriber", 
-    skip(form, pool), fields(subscriber_email = %form.email, subscriber_name = %form.name
+    skip(form, pool, email_client), fields(subscriber_email = %form.email, subscriber_name = %form.name
     ))
 ]
-pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
+pub async fn subscribe(
+    form: web::Form<FormData>,
+    pool: web::Data<PgPool>,
+    email_client: web::Data<EmailClient>,
+) -> HttpResponse {
     let new_subscriber = match form.0.try_into() {
         Ok(subscriber) => subscriber,
         Err(_) => return HttpResponse::BadRequest().finish(),
     };
 
-    match insert_subscriber(&new_subscriber, &pool).await {
-        Ok(_) => HttpResponse::Ok().finish(),
-        Err(e) => {
-            tracing::error!("Failed to execute query. {:?}", e);
-
-            HttpResponse::InternalServerError().finish()
-        }
+    if insert_subscriber(&new_subscriber, &pool).await.is_err() {
+        return HttpResponse::InternalServerError().finish();
     }
+
+    if send_confirmation_email(new_subscriber, &email_client)
+        .await
+        .is_err()
+    {
+        return HttpResponse::InternalServerError().finish();
+    }
+    HttpResponse::Ok().finish()
 }
 impl TryFrom<FormData> for NewSubscriber {
     type Error = String;
@@ -63,4 +71,29 @@ pub async fn insert_subscriber(
     })?;
 
     Ok(())
+}
+
+#[tracing::instrument(
+    name = "Sending a confirmation email",
+    skip(new_subscriber, email_client)
+)]
+pub async fn send_confirmation_email(
+    new_subscriber: NewSubscriber,
+    email_client: &EmailClient,
+) -> Result<(), reqwest::Error> {
+    let confirmation_link = "https://api.aswaa.dev/subscriptions/confirm/";
+    let plain_body = format!(
+        "Welcome to our newsletter! \nVisit the link below to confirm your subscription: \n {}",
+        confirmation_link
+    );
+    let html_body = format!(
+        "Welcome to our newsletter! <br/>\
+            Please confirm your subscription by clicking the link below: <br/>\
+            Click <a href=\"{}\">here</a> to confirm your subscription",
+        confirmation_link
+    );
+
+    email_client
+        .send_email(new_subscriber.email, "Welcome!", &html_body, &plain_body)
+        .await
 }
